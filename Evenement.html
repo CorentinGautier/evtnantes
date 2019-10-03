@@ -159,6 +159,10 @@
         display: block;
         border: none;
       }
+
+      .align-left {
+        float: left;
+      }
     </style>
   </head>
   <body>
@@ -174,9 +178,29 @@
           v-bind:class="{ 'active': layout == 'grid'}"
           v-on:click="layout = 'grid'"
         ></a>
+      </br>
+        <input
+          class="align-left"
+          type="text"
+          v-model="searchString"
+          placeholder="Entrez le nom de l'évènenement que vous recherchez"
+        />
       </div>
+      <ul>
+          <!-- Render a li element for every entry in the computed filteredArticles array. -->
+  
+          <li v-for="event in filteredEvent">
+              <a v-bind:href="event.fields.lien_agenda" target="_blank">
+                  <img v-bind:src="event.fields.media_1" /></a>
+            <!-- v-bind:src="article.image" met le lien de l'image -->
+            <h3>le {{ event.fields.date }}</h3>
+            <h3>{{ event.fields.nom }}</h3>
+            <h3>{{ event.fields.ville }}</h3>
+            <h3>{{ event.fields.lieu_quartier }}</h3>
+          </li>
+        </ul>
 
-      <ul v-if="layout == 'grid'" class="grid">
+      <ul v-if="layout == 'grid' && self.recherche==false"class="grid">
         <!-- A view with big photos and no text -->
         <li v-for="a in evenement">
           <span>
@@ -192,7 +216,7 @@
         </li>
       </ul>
 
-      <ul v-if="layout == 'list'" class="list">
+      <ul v-if="layout == 'list'&& self.recherche == false"class="list">
         <!-- A compact view smaller photos and titles -->
         <li v-for="a in evenement">
           <h3>le {{ a.fields.date }}</h3>
@@ -217,7 +241,9 @@
         el: "#main",
 
         data: {
+          recherche: false,
           layout: "grid",
+          searchString: "",
           evenement: []
         },
 
@@ -236,7 +262,29 @@
                 console.log(error);
               });
           }
-        }
+        },
+          computed: {
+            filteredEvent: function() {
+              self.recherche = true; 
+                var event_array = this.evenement,
+                searchString = this.searchString;
+
+              if (!searchString) {
+                //si aucune chaine, il retourne la liste arcticle de base
+                return event_array;
+              }
+              console.log(searchString);
+              searchString = searchString.trim().toLowerCase(); //transforme la chaine en minuscule
+
+              event_array = event_array.filter(function(item) {
+                // si dans le titre de l'article, il trouve la chaine
+                if (item.fields.nom.toLowerCase().indexOf(searchString) !== -1 ){
+                  return item; // alors il retourne l'item sinon rien
+                }
+              });
+              return event_array;
+            }
+          }
       });
     </script>
   </body>
