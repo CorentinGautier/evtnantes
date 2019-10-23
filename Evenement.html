@@ -192,7 +192,6 @@
           <li v-for="event in filteredEvent">
               <a v-bind:href="event.fields.lien_agenda" target="_blank">
                   <img v-bind:src="event.fields.media_1" /></a>
-            <!-- v-bind:src="article.image" met le lien de l'image -->
             <h3>le {{ event.fields.date }}</h3>
             <h3>{{ event.fields.nom }}</h3>
             <h3>{{ event.fields.ville }}</h3>
@@ -266,7 +265,7 @@
           computed: {
             filteredEvent: function() {
               self.recherche = true; 
-                var event_array = this.evenement,
+                var event_array = this.evenement, //créer un nouveau obj pour avoir sous la main l'ancien obj pour annuler la recherche et afficher les donnnées
                 searchString = this.searchString;
 
               if (!searchString) {
